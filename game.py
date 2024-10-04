@@ -61,6 +61,30 @@ def printBoard():
         print(row)
     print()
 
+def checkWin():
+    for row in board:
+        if 2048 in row:
+            return True
+    return False
+
+def checkLose():
+    for row in board:
+        if 0 in row:
+            return False
+
+    for i in range(4):
+        for j in range(3):
+            if board[i][j] == board[i][j + 1]:
+                return False
+
+    for i in range(3):
+        for j in range(4):
+            if board[i][j] == board[i + 1][j]:
+                return False
+
+    return True
+
+
 def get_move():
     move = input("Enter your move (up, down, left, right): ").strip().lower()
     while move not in ['up', 'down', 'left', 'right']:
@@ -76,6 +100,14 @@ def game():
     printBoard()
 
     while True:
+        if checkWin():
+            print("You win! You've reached 2048!")
+            break
+        
+        if checkLose():
+            print("Game over! No more valid moves.")
+            break
+
         move = get_move()
         
         old_board = copy.deepcopy(board)
