@@ -10,14 +10,14 @@ BUTTON_TEXT_COLOR = (255, 255, 255)
 TEXT_COLOR = (119, 110, 101)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("PY2048")
+pygame.display.set_caption("PYS2048")
 title_font = pygame.font.Font(None, TITLE_FONT_SIZE)
 button_font = pygame.font.Font(None, BUTTON_FONT_SIZE)
 
 def draw_title_screen():
     screen.fill(BACKGROUND_COLOR)
 
-    title_surface = title_font.render("PY2048", True, TEXT_COLOR)
+    title_surface = title_font.render("PYS2048", True, TEXT_COLOR)
     title_rect = title_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
     screen.blit(title_surface, title_rect)
 

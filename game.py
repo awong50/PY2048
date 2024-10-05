@@ -31,7 +31,7 @@ BUTTON_COLOR = (119, 136, 153)
 BUTTON_TEXT_COLOR = (255, 255, 255)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("PY2048")
+pygame.display.set_caption("PYS2048")
 font = pygame.font.Font(None, FONT_SIZE)
 score_font = pygame.font.Font(None, SCORE_FONT_SIZE)
 timer_font = pygame.font.Font(None, TIMER_FONT_SIZE)

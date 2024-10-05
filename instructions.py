@@ -11,7 +11,7 @@ BUTTON_TEXT_COLOR = (255, 255, 255)
 TEXT_COLOR = (119, 110, 101)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("PY2048")
+pygame.display.set_caption("PYS2048")
 title_font = pygame.font.Font(None, TITLE_FONT_SIZE)
 button_font = pygame.font.Font(None, BUTTON_FONT_SIZE)
 instruction_font = pygame.font.Font(None, INSTRUCTION_FONT_SIZE)
@@ -24,7 +24,7 @@ def draw_instruction_screen():
     screen.blit(title_surface, title_rect)
 
     instructions = [
-        "Use your arrow keys to move the tiles.",
+        "Use your arrow keys or WASD to move the tiles.",
         "When two tiles with the same number touch,",
         "they merge into one! When the timer hits 0,", 
         "a random tile is added! Try to reach 2048."
