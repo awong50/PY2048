@@ -19,12 +19,10 @@ instruction_font = pygame.font.Font(None, INSTRUCTION_FONT_SIZE)
 def draw_instruction_screen():
     screen.fill(BACKGROUND_COLOR)
 
-    # Title
     title_surface = title_font.render("How to Play", True, TEXT_COLOR)
     title_rect = title_surface.get_rect(center=(WIDTH // 2, 100))
     screen.blit(title_surface, title_rect)
 
-    # Instruction text split into multiple lines
     instructions = [
         "Use your arrow keys to move the tiles.",
         "When two tiles with the same number touch,",
@@ -37,7 +35,6 @@ def draw_instruction_screen():
         instruction_rect = instruction_surface.get_rect(center=(WIDTH // 2, 200 + i * 30))
         screen.blit(instruction_surface, instruction_rect)
 
-    # Start button
     start_button_rect = pygame.Rect(WIDTH // 2 - 75, HEIGHT - 150, 150, 50)
     pygame.draw.rect(screen, BUTTON_COLOR, start_button_rect)
     
@@ -60,5 +57,5 @@ def instruction_screen():
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos):
-                    running = False  # Exit the instructions screen and return to the main game
+                    running = False  
 

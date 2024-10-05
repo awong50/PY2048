@@ -42,10 +42,10 @@ board = [[0, 0, 0, 0],
          [0, 0, 0, 0]]
 score = 0
 high_score = 0
-move_timer = None  # Timer for Speed Mode
-timer_speed = 3  # Default 3 seconds per move
-speed_levels = [1, 3 ,5, 10, 60]  # Possible speed levels
-current_speed_index = 2  # Start with the default 3 seconds (index 2)
+move_timer = None  
+timer_speed = 3  
+speed_levels = [1, 3 ,5, 10, 60]  
+current_speed_index = 2  
 
 
 def reset_game():
@@ -57,7 +57,7 @@ def reset_game():
     score = 0
     spawnRandTile(force_two=True)
     spawnRandTile(force_two=True)
-    move_timer = time.time()  # Start timer for Speed Mode
+    move_timer = time.time() 
 
 def spawnRandTile(force_two=False):
     emptySpots = [(x, y) for x in range(GRID_SIZE) for y in range(GRID_SIZE) if board[x][y] == 0]
@@ -115,35 +115,29 @@ def draw_board():
     global high_score, timer_speed
     screen.fill(BACKGROUND_COLOR)
 
-    # Render score
     score_surface = score_font.render(f"Score: {score}", True, TEXT_COLOR)
     screen.blit(score_surface, (10, 10))
 
-    # Render high score
     high_score_surface = score_font.render(f"High Score: {high_score}", True, TEXT_COLOR)
     screen.blit(high_score_surface, (10, 40))
 
-    # Render timer countdown
-    time_remaining = max(0, timer_speed - (time.time() - move_timer))  # Countdown in seconds
+    time_remaining = max(0, timer_speed - (time.time() - move_timer))  
     timer_surface = timer_font.render(f"Timer: {time_remaining:.1f}s", True, TEXT_COLOR)
-    screen.blit(timer_surface, (10, 70))  # Positioning the timer below the score
+    screen.blit(timer_surface, (10, 70)) 
 
-    # Draw the "Change Speed" button
     speed_button_rect = pygame.Rect(WIDTH - 150, 10, 110, 40)
     pygame.draw.rect(screen, BUTTON_COLOR, speed_button_rect)
     speed_button_text = font.render("Speed", True, BUTTON_TEXT_COLOR)
     screen.blit(speed_button_text, (WIDTH - 140, 15))
 
-    # Render current speed below the "Change Speed" button
     speed_surface = timer_font.render(f"Speed: {timer_speed}s", True, TEXT_COLOR)
-    screen.blit(speed_surface, (WIDTH - 135, 55))  # Positioning the speed below the button
+    screen.blit(speed_surface, (WIDTH - 135, 55))
 
-    # Render the game board
     for i in range(GRID_SIZE):
         for j in range(GRID_SIZE):
             value = board[i][j]
             cell_color = CELL_COLORS.get(value, EMPTY_CELL_COLOR)
-            pygame.draw.rect(screen, cell_color, (j * CELL_SIZE, i * CELL_SIZE + 100, CELL_SIZE, CELL_SIZE))  # Shift grid down
+            pygame.draw.rect(screen, cell_color, (j * CELL_SIZE, i * CELL_SIZE + 100, CELL_SIZE, CELL_SIZE)) 
             if value != 0:
                 text_surface = font.render(str(value), True, TEXT_COLOR)
                 text_rect = text_surface.get_rect(center=(j * CELL_SIZE + CELL_SIZE / 2, i * CELL_SIZE + 100 + CELL_SIZE / 2))
@@ -157,7 +151,7 @@ def draw_game_over():
     global high_score
     screen.fill(BACKGROUND_COLOR)
 
-    offset = 200  # Adjust this to move the entire Game Over screen up or down
+    offset = 200  
 
     game_over_surface = font.render("GAME OVER", True, TEXT_COLOR)
     game_over_rect = game_over_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - offset))
@@ -171,7 +165,6 @@ def draw_game_over():
     final_score_rect = final_score_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - offset + 100))
     screen.blit(final_score_surface, final_score_rect)
 
-    # Retry button
     retry_button_rect = pygame.Rect(WIDTH // 2 - 75, HEIGHT // 2 - offset + 160, 150, 50)
     pygame.draw.rect(screen, BUTTON_COLOR, retry_button_rect)
 
@@ -179,7 +172,6 @@ def draw_game_over():
     retry_button_text_rect = retry_button_text_surface.get_rect(center=retry_button_rect.center)
     screen.blit(retry_button_text_surface, retry_button_text_rect)
 
-    # Return to Title button
     title_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - offset + 220, 200, 50)
     pygame.draw.rect(screen, BUTTON_COLOR, title_button_rect)
 
@@ -188,8 +180,7 @@ def draw_game_over():
     screen.blit(title_button_text_surface, title_button_text_rect)
 
     pygame.display.update()
-
-    # Return both button rectangles
+    
     return retry_button_rect, title_button_rect
 
 
