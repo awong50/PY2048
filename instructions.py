@@ -28,7 +28,8 @@ def draw_instruction_screen():
     instructions = [
         "Use your arrow keys to move the tiles.",
         "When two tiles with the same number touch,",
-        "they merge into one! Try to reach 2048."
+        "they merge into one! When the timer hits 0,", 
+        "a random tile is added! Try to reach 2048."
     ]
     
     for i, line in enumerate(instructions):

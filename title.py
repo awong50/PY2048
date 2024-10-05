@@ -31,7 +31,7 @@ def draw_title_screen():
     start_button_text_rect = start_button_surface.get_rect(center=start_button_rect.center)
     screen.blit(start_button_surface, start_button_text_rect)
 
-    instructions_button_rect = pygame.Rect(WIDTH // 2 - 75, HEIGHT // 2 + 120, 150, 50)
+    instructions_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 120, 200, 50)
     pygame.draw.rect(screen, BUTTON_COLOR, instructions_button_rect)
     instructions_button_surface = button_font.render("How to Play", True, BUTTON_TEXT_COLOR)
     instructions_button_text_rect = instructions_button_surface.get_rect(center=instructions_button_rect.center)

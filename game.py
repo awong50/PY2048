@@ -1,13 +1,15 @@
 import pygame
 import random
 import copy
+import time
 
 pygame.init()
 
-WIDTH, HEIGHT = 400, 500  
+WIDTH, HEIGHT = 400, 700  
 GRID_SIZE = 4
 CELL_SIZE = WIDTH // GRID_SIZE
 FONT_SIZE = 40
+TIMER_FONT_SIZE = 25
 SCORE_FONT_SIZE = 30
 BACKGROUND_COLOR = (187, 173, 160)
 EMPTY_CELL_COLOR = (205, 193, 180)
@@ -32,6 +34,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("PY2048")
 font = pygame.font.Font(None, FONT_SIZE)
 score_font = pygame.font.Font(None, SCORE_FONT_SIZE)
+timer_font = pygame.font.Font(None, TIMER_FONT_SIZE)
 
 board = [[0, 0, 0, 0],
          [0, 0, 0, 0],
@@ -39,22 +42,28 @@ board = [[0, 0, 0, 0],
          [0, 0, 0, 0]]
 score = 0
 high_score = 0
+move_timer = None  # Timer for Speed Mode
+timer_speed = 3  # Default 3 seconds per move
+speed_levels = [1, 3 ,5, 10, 60]  # Possible speed levels
+current_speed_index = 2  # Start with the default 3 seconds (index 2)
+
 
 def reset_game():
-    global board, score
+    global board, score, move_timer
     board = [[0, 0, 0, 0],
              [0, 0, 0, 0],
              [0, 0, 0, 0],
              [0, 0, 0, 0]]
     score = 0
-    spawnRandTwo()
-    spawnRandTwo()
+    spawnRandTile(force_two=True)
+    spawnRandTile(force_two=True)
+    move_timer = time.time()  # Start timer for Speed Mode
 
-def spawnRandTwo():
+def spawnRandTile(force_two=False):
     emptySpots = [(x, y) for x in range(GRID_SIZE) for y in range(GRID_SIZE) if board[x][y] == 0]
     if emptySpots:
         xCord, yCord = random.choice(emptySpots)
-        board[xCord][yCord] = 2
+        board[xCord][yCord] = 2 if force_two or random.random() >= 0.1 else 4
 
 def shift(row):
     newRow = [num for num in row if num != 0]
@@ -103,15 +112,33 @@ def moveDown():
             board[i][j] = col[i]
 
 def draw_board():
-    global high_score
+    global high_score, timer_speed
     screen.fill(BACKGROUND_COLOR)
 
+    # Render score
     score_surface = score_font.render(f"Score: {score}", True, TEXT_COLOR)
     screen.blit(score_surface, (10, 10))
 
+    # Render high score
     high_score_surface = score_font.render(f"High Score: {high_score}", True, TEXT_COLOR)
     screen.blit(high_score_surface, (10, 40))
 
+    # Render timer countdown
+    time_remaining = max(0, timer_speed - (time.time() - move_timer))  # Countdown in seconds
+    timer_surface = timer_font.render(f"Timer: {time_remaining:.1f}s", True, TEXT_COLOR)
+    screen.blit(timer_surface, (10, 70))  # Positioning the timer below the score
+
+    # Draw the "Change Speed" button
+    speed_button_rect = pygame.Rect(WIDTH - 150, 10, 110, 40)
+    pygame.draw.rect(screen, BUTTON_COLOR, speed_button_rect)
+    speed_button_text = font.render("Speed", True, BUTTON_TEXT_COLOR)
+    screen.blit(speed_button_text, (WIDTH - 140, 15))
+
+    # Render current speed below the "Change Speed" button
+    speed_surface = timer_font.render(f"Speed: {timer_speed}s", True, TEXT_COLOR)
+    screen.blit(speed_surface, (WIDTH - 135, 55))  # Positioning the speed below the button
+
+    # Render the game board
     for i in range(GRID_SIZE):
         for j in range(GRID_SIZE):
             value = board[i][j]
@@ -124,40 +151,44 @@ def draw_board():
 
     pygame.display.update()
 
+    return speed_button_rect
+
 def draw_game_over():
     global high_score
     screen.fill(BACKGROUND_COLOR)
 
+    offset = 200  # Adjust this to move the entire Game Over screen up or down
+
     game_over_surface = font.render("GAME OVER", True, TEXT_COLOR)
-    game_over_rect = game_over_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 150))
+    game_over_rect = game_over_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - offset))
     screen.blit(game_over_surface, game_over_rect)
 
     high_score_surface = font.render(f"High Score: {high_score}", True, TEXT_COLOR)
-    high_score_rect = high_score_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
+    high_score_rect = high_score_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - offset + 50))
     screen.blit(high_score_surface, high_score_rect)
-    
+
     final_score_surface = font.render(f"Final Score: {score}", True, TEXT_COLOR)
-    final_score_rect = final_score_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
+    final_score_rect = final_score_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - offset + 100))
     screen.blit(final_score_surface, final_score_rect)
 
     # Retry button
-    retry_button_rect = pygame.Rect(WIDTH // 2 - 75, HEIGHT // 2 + 10, 150, 50)
+    retry_button_rect = pygame.Rect(WIDTH // 2 - 75, HEIGHT // 2 - offset + 160, 150, 50)
     pygame.draw.rect(screen, BUTTON_COLOR, retry_button_rect)
-    
+
     retry_button_text_surface = font.render("Retry", True, BUTTON_TEXT_COLOR)
     retry_button_text_rect = retry_button_text_surface.get_rect(center=retry_button_rect.center)
     screen.blit(retry_button_text_surface, retry_button_text_rect)
 
     # Return to Title button
-    title_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 70, 200, 50)
+    title_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - offset + 220, 200, 50)
     pygame.draw.rect(screen, BUTTON_COLOR, title_button_rect)
 
     title_button_text_surface = font.render("Return to Title", True, BUTTON_TEXT_COLOR)
     title_button_text_rect = title_button_text_surface.get_rect(center=title_button_rect.center)
     screen.blit(title_button_text_surface, title_button_text_rect)
-    
+
     pygame.display.update()
-    
+
     # Return both button rectangles
     return retry_button_rect, title_button_rect
 
@@ -182,32 +213,36 @@ def checkLose():
     return True
 
 def game():
-    global high_score
+    global high_score, move_timer, timer_speed, current_speed_index
     running = True
     game_over = False
     reset_game()
 
     while running:
         if game_over:
-            button_rect, title_rect = draw_game_over()
-            
+            retry_button_rect, title_button_rect = draw_game_over()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if button_rect.collidepoint(event.pos):
+                    if retry_button_rect.collidepoint(event.pos):
                         reset_game()
                         game_over = False
                         return "game"
-                    elif title_rect.collidepoint(event.pos):
+                    elif title_button_rect.collidepoint(event.pos):
                         return "title_screen"
+
         else:
-            draw_board()
-            if checkWin():
-                print("You win!")
-                running = False
-            if checkLose():
-                game_over = True
+            speed_button_rect = draw_board()
+
+            if time.time() - move_timer >= timer_speed:
+                if any(0 in row for row in board):
+                    spawnRandTile()
+                else:
+                    if checkLose():
+                        game_over = True
+                move_timer = time.time()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -215,7 +250,6 @@ def game():
 
                 elif event.type == pygame.KEYDOWN:
                     old_board = copy.deepcopy(board)
-
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         moveLeft()
                     elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
@@ -228,12 +262,18 @@ def game():
                         game_over = True
 
                     if boardChanged(old_board, board):
-                        spawnRandTwo()
+                        if any(0 in row for row in board):
+                            spawnRandTile()
+                        else:
+                            if checkLose():
+                                game_over = True
+                        move_timer = time.time()
 
                     if score > high_score:
                         high_score = score
-        
-    
 
-
-    
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if speed_button_rect.collidepoint(event.pos):
+                        current_speed_index = (current_speed_index + 1) % len(speed_levels)
+                        timer_speed = speed_levels[current_speed_index]
+                        move_timer = time.time()
